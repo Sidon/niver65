@@ -1,0 +1,3 @@
+logging:
+  filename: 'error.log'
+  format: '%(asctime)s - %(levelname)s - %(message)s'
