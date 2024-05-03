@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="vh-100 d-flex align-items-center justify-content-center">
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Login - Sugestão de Músicas</h2>
+                <form hx-post="/check-email" hx-target="body">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Insira seu Email</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="email@exemplo.com" required>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Enviar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

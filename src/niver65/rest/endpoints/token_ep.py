@@ -1,8 +1,9 @@
 import logging
 from uuid import UUID, uuid4
 
-from fastapi import APIRouter, Depends, Request, HTTPException
+from fastapi import APIRouter, Depends, Request, HTTPException, Form
 from fastapi.params import Query
+from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 
 from src.niver65.database.db_session import get_db_session
@@ -12,7 +13,6 @@ from src.niver65.service_layer.guests_service import GuestsService
 
 router = APIRouter()
 info_logger = logging.getLogger('info_logger')
-
 
 @router.get(path=f'{settings.path_base}/', tags=['Entry point'], response_model=dto.ResponseDto)
 def entry_point(
@@ -44,4 +44,11 @@ def entry_point(
     if valid_token:
         resp.status = valid_token
 
-    return resp
+    return settings.template_jinja2.TemplateResponse("login.html", {"request": request})
+
+
+@router.post("/check-email", response_class=HTMLResponse)
+async def check_email(request: Request, email: str = Form(...)):
+    # Aqui, você pode verificar o email e/ou criar uma sessão para o usuário
+    # Renderiza a página de sugestão de músicas
+    return settings.template_jinja2.TemplateResponse("music_suggestion.html", {"request": request, "email": email})

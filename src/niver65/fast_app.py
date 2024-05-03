@@ -1,7 +1,11 @@
 #! /usr/bin/python python3
 import logging
 import uuid
+
 from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
@@ -23,6 +27,9 @@ app = FastAPI(
     version="v0"
 )
 
+# app.mount("/static", StaticFiles(directory=settings.static_path), name="static")
+
+
 origins = [
     "http://localhost",
     "http://localhost:8080",
@@ -39,7 +46,6 @@ app.add_middleware(
 )
 
 app.include_router(v1_router)
-
 
 # Evento de inicialização
 async def startup():
