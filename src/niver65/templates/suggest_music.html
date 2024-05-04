@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Suggest Music{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+
+    <!-- Cabeçalho com informações do usuário -->
+    <div class="row bg-light p-3 header-content">
+        <div class="col">
+            <h1>Sugestões para a playlist</h1>
+            <p><strong>{{ name }} | {{ email }}</p>
+        </div>
+    </div>
+
+    <!-- Corpo da página com duas colunas -->
+    <div class="row">
+        <!-- Coluna esquerda para entrada e exibição das músicas sugeridas pelo usuário -->
+        <div class="col-md-6">
+            <!-- Formulário para nova sugestão -->
+            <div class="p-3">
+                <form hx-post="/add-music" hx-target="#user-music-list" hx-swap="beforeend">
+                    <div class="mb-3">
+                        <label for="music_name" class="form-label">Music Name</label>
+                        <input type="text" class="form-control" id="music_name" name="music_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="music_link" class="form-label">Music Link (YouTube/Spotify)</label>
+                        <input type="url" class="form-control" id="music_link" name="music_link" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+            <!-- Área para mostrar as músicas sugeridas pelo usuário -->
+            <div id="user-music-list" class="p-3" style="max-height: 300px; overflow-y: auto;">
+                <!-- Músicas adicionadas aparecerão aqui -->
+            </div>
+        </div>
+
+        <!-- Coluna direita para exibir todas as músicas do banco -->
+        <div class="col-md-6">
+            <div id="all-music-list" class="p-3" style="max-height: 600px; overflow-y: auto;">
+                <!-- HTMX para carregar a lista de músicas do banco -->
+                <div hx-get="/load-music" hx-trigger="load" hx-target="#all-music-list" hx-swap="innerHTML">
+                    Loading music list...
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

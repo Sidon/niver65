@@ -3,9 +3,13 @@
 {% block content %}
 <div class="row">
     <div class="col-md-6">
-        <h2>Sugestões de músicas para {{ email }}</h2>
+        <h2>Sugira músicas para a festa</h2>
         <!-- Formulário para sugestão de músicas com htmx -->
         <form hx-post="/submit-music" hx-target="#music-list" hx-swap="outerHTML">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
             {% for i in range(10) %}
             <div class="mb-3">
                 <label for="music{{i}}" class="form-label">Música {{i//2 + 1}}</label>

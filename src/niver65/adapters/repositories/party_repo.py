@@ -36,7 +36,7 @@ class GuestRepository(AbstractRepository, ABC):
         self.session.commit()
 
     def get(self, email):
-        return self.session.execute(select(Guest).where(Guest.email == email)).scalar_one_or_none()
+        return self.session.query(GuestOrm).filter_by(email=email).one_or_none()
 
     def remove(self, guest):
         self.session.delete(guest)
@@ -52,9 +52,12 @@ class SuggestionRepository(AbstractRepository, ABC):
         self.session.add(suggestion)
         self.session.commit()
 
-    def get(self, id):
-        return self.session.execute(select(Suggestion).where(Suggestion.id == id)).scalar_one_or_none()
+    def get(self, email):
+        return self.session.query(SuggestionOrm).filter_by(id_email=email).one_or_none()
 
     def remove(self, suggestion):
         self.session.delete(suggestion)
         self.session.commit()
+
+    def list_all(self):
+        return self.session.query(SuggestionOrm).all()

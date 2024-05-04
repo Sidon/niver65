@@ -14,41 +14,49 @@ from src.niver65.service_layer.guests_service import GuestsService
 router = APIRouter()
 info_logger = logging.getLogger('info_logger')
 
+
 @router.get(path=f'{settings.path_base}/', tags=['Entry point'], response_model=dto.ResponseDto)
 def entry_point(
         request: Request,
         db_session: Session = Depends(get_db_session),
         token: str = Query(default=None, description="Token do quem recebeu/distribuiu o link")
 ) -> dto.ResponseDto:
-    client_ip = request.client.host
-    x_forwarded_for = request.headers.get("x-forwarded-for")
-    if x_forwarded_for:
-        client_ip = x_forwarded_for.split(",")[0]
-
-    info_logger.info(f'Acesso a / {client_ip}')
     resp = dto.ResponseDto()
 
     if not token:
         resp.status = 'Falta o token no endereço'
         return resp
 
+    resp.status = 'Token inválido'
     try:
         uuid_token = UUID(token)
     except ValueError:
-        resp.status = 'Token inválido'
         return resp
 
     service_guest = GuestsService(db_session)
     valid_token = service_guest.token_check(uuid_token)
 
     if valid_token:
-        resp.status = valid_token
-
-    return settings.template_jinja2.TemplateResponse("login.html", {"request": request})
+        return settings.template_jinja2.TemplateResponse("login.html", {"request": request})
+    else:
+        return resp
 
 
 @router.post("/check-email", response_class=HTMLResponse)
-async def check_email(request: Request, email: str = Form(...)):
-    # Aqui, você pode verificar o email e/ou criar uma sessão para o usuário
+async def process_login(
+        request: Request, name: str = Form(...), email: str = Form(...),
+        db_session: Session = Depends(get_db_session),
+):
+    service_guest = GuestsService(db_session)
+    check_login = service_guest.check_login(email)
+    # breakpoint()
     # Renderiza a página de sugestão de músicas
-    return settings.template_jinja2.TemplateResponse("music_suggestion.html", {"request": request, "email": email})
+    return settings.template_jinja2.TemplateResponse(
+        "suggest_music.html",
+        {
+            "request": request,
+            "email": email,
+            "name": name,
+        }
+    )
+

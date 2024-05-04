@@ -33,6 +33,10 @@ class SuggestionDto(BaseModel):
         from_attributes = True
 
 
+class ListSuggestionDto(BaseModel):
+    suggestions: List[SuggestionDto]
+
+
 # Modelo Pydantic adicional para resposta detalhada
 class GuestDetailDto(GuestDto):
     suggestions: List[SuggestionDto] = []

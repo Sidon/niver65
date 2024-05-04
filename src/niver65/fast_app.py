@@ -3,7 +3,6 @@ import logging
 import uuid
 
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from fastapi.exceptions import RequestValidationError
@@ -27,7 +26,7 @@ app = FastAPI(
     version="v0"
 )
 
-# app.mount("/static", StaticFiles(directory=settings.static_path), name="static")
+app.mount("/static", StaticFiles(directory=settings.static_path), name="static")
 
 
 origins = [

@@ -1,22 +1,24 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
 
 {% block content %}
-<div class="vh-100 d-flex align-items-center justify-content-center">
-    <div class="col-md-4">
-        <div class="card shadow">
-            <div class="card-body">
-                <h2 class="card-title text-center mb-4">Login - Sugestão de Músicas</h2>
-                <form hx-post="/check-email" hx-target="body">
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Insira seu Email</label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="email@exemplo.com" required>
-                    </div>
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">Enviar</button>
-                    </div>
-                </form>
+<div class="card shadow-lg" style="width: 24rem; background: #fff; border-radius: 8px; overflow: hidden;">
+    <div class="card-header text-white" style="background: #007bff;">Login</div>
+    <div class="card-body">
+        <form method="post" action="{{ url_for('process_login') }}">
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" name="name" required>
             </div>
-        </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}
