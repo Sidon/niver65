@@ -39,6 +39,7 @@
 
         <!-- Coluna direita para exibir todas as músicas do banco -->
         <div class="col-md-6">
+            <h3 class="mb-1">Músicas Cadastradas</h3>
             <div id="all-music-list" class="p-3" style="max-height: 600px; overflow-y: auto;">
                 <!-- HTMX para carregar a lista de músicas do banco -->
                 <div hx-get="/load-music" hx-trigger="load" hx-target="#all-music-list" hx-swap="innerHTML">

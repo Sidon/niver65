@@ -1,6 +1,6 @@
 import logging
 
-from fastapi import APIRouter, Depends, Request, HTTPException, Form
+from fastapi import APIRouter, Depends, Request, HTTPException, Form, status
 from fastapi.params import Query
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
@@ -14,7 +14,7 @@ from src.niver65.rest.dto.models_dto import ListSuggestionDto, SuggestionDto
 router = APIRouter()
 info_logger = logging.getLogger('info_logger')
 
-
+music_list = []
 @router.post("/add-music")
 async def add_music(
         request: Request,
@@ -24,10 +24,24 @@ async def add_music(
     # Aqui você adicionaria a música ao banco de dados
     # Retornar a música recém-adicionada para atualização da lista
 
-    music_info = {"song_name": music_name, "song_info": music_link}
+    if len(music_list)>2:
+        # Retorna um erro HTTP 400 Bad Request se já tiver 10 músicas
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Não é possível adicionar mais de 10 músicas."
+        )
+
+    music_list.append(SuggestionDto(
+        # id=1,
+        id_email='test@test1.com',
+        song_name=music_name,
+        info_song=music_link
+    ))
+
+    music_obj = {"song_name": music_name, "song_link": music_link}
     return settings.template_jinja2.TemplateResponse(
         "partials/music_item.html",
-        {"request": request, "music": music_info}
+        {"request": request, "music": music_obj}
     )
 
 

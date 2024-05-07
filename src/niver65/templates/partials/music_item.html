@@ -1,7 +1,5 @@
 <!-- partials/music_item.html -->
-<li class="list-group-item d-flex justify-content-between align-items-center">
-    {{ music.song_name }}
-    <span>
-        <a href="{{ music.info_song }}" target="_blank" class="btn btn-sm btn-outline-primary">Ouvir</a>
-    </span>
+<li class="list-group-item">
+    {{ music.song_name }} - <a href="{{ music.song_link }}" target="_blank"><i class="fas fa-external-link-alt"></i></a>
 </li>
+

@@ -24,7 +24,7 @@ class GuestDto(BaseModel):
 
 # Modelo Pydantic para Suggestion
 class SuggestionDto(BaseModel):
-    id: int
+    id: Optional[int] = None
     id_email: EmailStr
     song_name: str
     info_song: Optional[str]
