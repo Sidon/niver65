@@ -44,7 +44,7 @@ def entry_point(
         return resp
 
 
-@router.post("/check-email", response_class=HTMLResponse)
+@router.post("/process-login", response_class=HTMLResponse)
 async def process_login(
         request: Request, name: str = Form(...), email: str = Form(...), token_id: UUID = Form(...),
         db_session: Session = Depends(get_db_session),

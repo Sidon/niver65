@@ -1,15 +1,18 @@
-{% extends 'base.html' %}
+{% extends 'base2.html' %}
 
 {% block title %}Suggest Music{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
 
+
     <!-- Cabeçalho com informações do usuário -->
-    <div class="row bg-light p-3 header-content">
-        <div class="col">
-            <h1>Sugestões para a playlist</h1>
-            <p><strong>{{ name }} | {{ email }}</p>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="p-3">
+                <h1>Sugestões para a playlist</h1>
+                <p><strong>{{ name }} | {{ email }}</strong></p>
+            </div>
         </div>
     </div>
 
@@ -20,13 +23,16 @@
             <!-- Formulário para nova sugestão -->
             <div class="p-3">
                 <form hx-post="/add-music" hx-target="#user-music-list" hx-swap="beforeend">
+                    <input type="hidden" name="email_id" value="{{ email }}">
+                    <input type="hidden" id="entry_count" name="entry_count" value="0">  <!-- Campo oculto para o contador -->
                     <div class="mb-3">
-                        <label for="music_name" class="form-label">Music Name</label>
+                        <label for="music_name" class="form-label">Nome da música</label>
                         <input type="text" class="form-control" id="music_name" name="music_name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="music_link" class="form-label">Music Link (YouTube/Spotify)</label>
-                        <input type="url" class="form-control" id="music_link" name="music_link" required>
+                        <label for="music_link" class="form-label">Link Youtube (Se preferir, de duplo click para gerar busca)</label>
+                        <input type="url" class="form-control" id="music_link" name="music_link" required
+                           ondblclick="autoFillYouTubeLink()">
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
@@ -39,8 +45,13 @@
 
         <!-- Coluna direita para exibir todas as músicas do banco -->
         <div class="col-md-6">
-            <h3 class="mb-1">Músicas Cadastradas</h3>
-            <div id="all-music-list" class="p-3" style="max-height: 600px; overflow-y: auto;">
+
+            <div class="mb-1">
+                <h3 class="mb-0">Músicas Cadastradas</h3>
+            </div>
+
+            <div id="all-music-list" class="mt-0" style="max-height: 600px; overflow-y: auto;">
+
                 <!-- HTMX para carregar a lista de músicas do banco -->
                 <div hx-get="/load-music" hx-trigger="load" hx-target="#all-music-list" hx-swap="innerHTML">
                     Loading music list...
@@ -49,4 +60,30 @@
         </div>
     </div>
 </div>
+
+
+<!-- Scripts -->
+<script>
+
+document.body.addEventListener('htmx:afterRequest', function(event) {
+    if (event.detail && event.detail.elt && event.detail.elt.tagName === 'FORM') {
+        document.getElementById('music_name').value = '';
+        document.getElementById('music_link').value = '';
+    }
+});
+
+function autoFillYouTubeLink() {
+    var musicLinkField = document.getElementById('music_link');
+    if (musicLinkField.value === '') {
+        var musicName = document.getElementById('music_name').value.trim();
+        if (musicName !== '') {
+            musicLinkField.value = `https://www.youtube.com/results?search_query=${encodeURIComponent(musicName)}`;
+        } else {
+            alert('Por favor, informe o nome da música antes de buscar no YouTube.');
+        }
+    }
+}
+</script>
+</div>
+
 {% endblock %}

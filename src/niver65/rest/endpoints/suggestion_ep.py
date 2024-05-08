@@ -5,38 +5,38 @@ from fastapi.params import Query
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 
+from niver65.adapters.models.niver_party_orm import SuggestionOrm
 from src.niver65.database.db_session import get_db_session
 from src.niver65 import settings
 from src.niver65.rest.dto import models_dto as dto
 from src.niver65.service_layer.guests_service import GuestsService
 from src.niver65.rest.dto.models_dto import ListSuggestionDto, SuggestionDto
+from src.niver65.adapters.repositories.party_repo import SuggestionRepository
 
 router = APIRouter()
 info_logger = logging.getLogger('info_logger')
 
-music_list = []
+list_songs=[]
+
 @router.post("/add-music")
 async def add_music(
         request: Request,
-        music_name: str = Form(...), music_link: str = Form(...),
-        db_session: Session = Depends(get_db_session)
+        music_name: str = Form(...), music_link: str = Form(...), email_id: str = Form(...), entry_count: int = Form(...),
+        db_session: Session = Depends(get_db_session),
 ):
-    # Aqui você adicionaria a música ao banco de dados
-    # Retornar a música recém-adicionada para atualização da lista
 
-    if len(music_list)>2:
+    if entry_count>=2:
         # Retorna um erro HTTP 400 Bad Request se já tiver 10 músicas
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Não é possível adicionar mais de 10 músicas."
         )
 
-    music_list.append(SuggestionDto(
-        # id=1,
-        id_email='test@test1.com',
-        song_name=music_name,
-        info_song=music_link
-    ))
+    # Adiciona ao banco
+    sugg_repo = SuggestionRepository(db_session)
+    sugg_dto = SuggestionDto(id_email=email_id, song_name=music_name, info_song=music_link)
+    sugg_orm = SuggestionOrm(**sugg_dto.dict())
+    sugg_repo.add(sugg_orm)
 
     music_obj = {"song_name": music_name, "song_link": music_link}
     return settings.template_jinja2.TemplateResponse(
