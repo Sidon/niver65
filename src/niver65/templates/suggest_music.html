@@ -34,7 +34,9 @@
                         <input type="url" class="form-control" id="music_link" name="music_link" required
                            ondblclick="autoFillYouTubeLink()">
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-primary" name="action" value="submit" title="Enviar sugestao atual e criar uma em branco">Enviar</button>
+                    <button type="submit" class="btn btn-success" name="action" value="conclude" data-bs-toggle="tooltip" data-bs-placement="top" hx-disable="true" title="Concluir adições e salvar.">Concluir</button>
+                    <button type="submit" class="btn btn-danger"  name="action" value="cancel" data-bs-toggle="tooltip" data-bs-placement="top" title="Cancelar todas as adições.">Cancelar</button>
                 </form>
             </div>
             <!-- Área para mostrar as músicas sugeridas pelo usuário -->
@@ -51,7 +53,6 @@
             </div>
 
             <div id="all-music-list" class="mt-0" style="max-height: 600px; overflow-y: auto;">
-
                 <!-- HTMX para carregar a lista de músicas do banco -->
                 <div hx-get="/load-music" hx-trigger="load" hx-target="#all-music-list" hx-swap="innerHTML">
                     Loading music list...
@@ -60,7 +61,6 @@
         </div>
     </div>
 </div>
-
 
 <!-- Scripts -->
 <script>
@@ -84,6 +84,4 @@ function autoFillYouTubeLink() {
     }
 }
 </script>
-</div>
-
 {% endblock %}

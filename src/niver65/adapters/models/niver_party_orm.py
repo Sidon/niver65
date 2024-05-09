@@ -11,6 +11,8 @@ class TokenOrm(Base):
     __tablename__ = 'tokens'
     token = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     nome = Column(String)
+    limit = Column(Integer)
+    balance = Column(Integer)
     guests = relationship("GuestOrm", back_populates="token")  # Relacionamento correto
 
 class GuestOrm(Base):

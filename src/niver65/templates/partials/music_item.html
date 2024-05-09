@@ -3,11 +3,3 @@
     {{ music.song_name }} - <a href="{{ music.song_link }}" target="_blank"><i class="fas fa-external-link-alt"></i></a>
 </li>
 
-<!-- partials/all_music_list.html -->
-<ul class="list-group">
-    {% for music in music_list %}
-    <li class="list-group-item">
-        {{ music.song_name }} - <a href="{{ music.info_song }}" target="_blank"><i class="fas fa-external-link-alt"></i></a>
-    </li>
-    {% endfor %}
-</ul>

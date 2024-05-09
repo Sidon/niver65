@@ -1,4 +1,5 @@
 from abc import ABC
+from uuid import UUID
 
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -33,6 +34,15 @@ class TokenRepository(AbstractRepository):
             self.session.commit()
         except SQLAlchemyError as e:
             raise HTTPException(status_code=400, detail=str(e))
+
+    def update_balance(self, token_id: UUID, decrease: int = 1):
+        try:
+            token_from_db = self.get(token_id)
+            token_from_db.balance -= decrease
+            self.session.commit()
+        except SQLAlchemyError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+
 
 
 
