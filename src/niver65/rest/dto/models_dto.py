@@ -1,3 +1,5 @@
+import datetime
+
 from pydantic import BaseModel, EmailStr, constr
 from typing import List, Optional
 from uuid import UUID
@@ -7,6 +9,8 @@ from uuid import UUID
 class TokenDto(BaseModel):
     token: UUID
     nome: str
+    limit: int
+    balance: int
 
     class Config:
         from_attributes = True
@@ -47,3 +51,11 @@ class GuestDetailDto(GuestDto):
 
 class ResponseDto(BaseModel):
     status: Optional[str] = None
+
+
+class SessionsDto(BaseModel):
+    id: Optional[int] = None
+    moment: datetime.datetime = datetime.datetime.now()
+
+    class Config:
+        from_attributes = True

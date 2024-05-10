@@ -1,10 +1,15 @@
 import logging
+
+from fastapi import Cookie
 from sqlalchemy.exc import SQLAlchemyError, OperationalError
 from starlette.exceptions import HTTPException
 
+from niver65.adapters.models.niver_party_orm import SessionsOrm
 from niver65.rest.errors import RestError
-from src.niver65.adapters.repositories.party_repo import TokenRepository, GuestRepository, SuggestionRepository
-from src.niver65.rest.dto.models_dto import TokenDto, GuestDto
+from src.niver65.adapters.repositories.party_repo import TokenRepository, GuestRepository, SuggestionRepository, \
+    SessionsRepository
+from src.niver65.rest.dto.models_dto import TokenDto, GuestDto, SessionsDto
+from src.niver65.database.db_session import get_db_session
 
 error_logger = logging.getLogger('error_logger')
 info_logger = logging.getLogger('info_logger')
@@ -15,6 +20,7 @@ class GuestsService:
         self.token_repo = TokenRepository(db_session)
         self.guest_repo = GuestRepository(db_session)
         self.suggestion_repo = SuggestionRepository(db_session)
+        self.user_session_repo = SessionsRepository(db_session)
 
     def token_check(self, token):
         try:
@@ -25,23 +31,31 @@ class GuestsService:
             # Aqui você pode retornar a resposta de erro usando o tratamento customizado
             raise http_exc
         except Exception as e:
-            # Outros erros inesperados podem ser tratados aqui
-            raise RestError(e)
+            raise (e)
 
         return None
 
     def check_login(self, guest: GuestDto):
         try:
             guest_orm = self.guest_repo.get(guest.email)
-            if guest_orm:
-                suggestion_orm = self.suggestion_repo.get(guest.email)
-                return suggestion_orm
-            else:
+            if not guest_orm:
                 self.guest_repo.add(guest)
         except SQLAlchemyError as e:
-            error_logger.error(f'Erro ao acessr dado do banco: {e}', exc_info=True)
+            error_logger.error(f'Erro ao acessar dado do banco: {e}', exc_info=True)
 
         return None
 
     def load_suggestions(self):
         return self.suggestion_repo.list_all()
+
+    def create_session_user(self):
+        user_session_dto = SessionsDto()
+        user_session_orm = SessionsOrm(**user_session_dto.dict())
+        return self.user_session_repo.add(user_session_orm)
+
+
+    def check_logged(session_token: str = Cookie(None)):
+        # breakpoint()
+        if not session_token:
+            return None
+        return session_token

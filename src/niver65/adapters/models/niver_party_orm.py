@@ -1,11 +1,12 @@
-from sqlalchemy import create_engine, Column, String, ForeignKey, Integer
+import datetime
+
+from sqlalchemy import create_engine, Column, String, ForeignKey, Integer, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 
 Base = declarative_base()
-
 
 class TokenOrm(Base):
     __tablename__ = 'tokens'
@@ -30,3 +31,9 @@ class SuggestionOrm(Base):
     song_name = Column(String)
     info_song = Column(String)
     guest = relationship("GuestOrm", back_populates="suggestions")
+
+
+class SessionsOrm(Base):
+    __tablename__ = 'sessions'
+    id = Column(Integer, primary_key=True)
+    moment = Column(DateTime, default=datetime.datetime)
