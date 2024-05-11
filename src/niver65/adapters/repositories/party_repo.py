@@ -9,6 +9,8 @@ from niver65.rest.dto.models_dto import GuestDto
 from src.niver65.adapters.models.niver_party_orm import TokenOrm, GuestOrm, SuggestionOrm, SessionsOrm
 from src.niver65.adapters.repositories.abstract_repo import AbstractRepository
 
+error_logger = logging.getLogger('error_logger')
+info_logger = logging.getLogger('info_logger')
 
 # Repositório para Tokens
 class TokenRepository(AbstractRepository):
@@ -26,6 +28,7 @@ class TokenRepository(AbstractRepository):
         try:
             return self.session.query(TokenOrm).filter_by(token=token_id).one_or_none()
         except SQLAlchemyError as e:
+            error_logger.error('Erro ao acessar db: {e}')
             raise HTTPException(status_code=500, detail="Erro ao buscar token na base de dados")
 
     def remove(self, token):
