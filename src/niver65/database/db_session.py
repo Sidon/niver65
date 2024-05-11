@@ -9,6 +9,7 @@ DATABASE_URL = settings.database_url
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+print(f'Url DB: {DATABASE_URL}')
 
 def get_db_session():
     db_session = SessionLocal()
