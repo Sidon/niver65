@@ -4,7 +4,7 @@ from fastapi import Cookie
 from sqlalchemy.exc import SQLAlchemyError, OperationalError
 from starlette.exceptions import HTTPException
 
-from niver65.adapters.models.niver_party_orm import SessionsOrm
+from niver65.adapters.models.niver_party_orm import SessionsOrm, GuestOrm
 from niver65.rest.errors import RestError
 from src.niver65.adapters.repositories.party_repo import TokenRepository, GuestRepository, SuggestionRepository, \
     SessionsRepository
@@ -28,7 +28,6 @@ class GuestsService:
             if token_orm:
                 return TokenDto.from_orm(token_orm)
         except HTTPException as http_exc:
-            # Aqui você pode retornar a resposta de erro usando o tratamento customizado
             raise http_exc
         except Exception as e:
             raise (e)
@@ -37,13 +36,15 @@ class GuestsService:
 
     def check_login(self, guest: GuestDto):
         try:
-            guest_orm = self.guest_repo.get(guest.email)
+            guest_orm: GuestOrm = self.guest_repo.get(guest.email)
             if not guest_orm:
                 self.guest_repo.add(guest)
+                return True, "Novo convidado"
+            if guest_orm.token_id != guest.token_id:
+                return False, "Token inválido"
         except SQLAlchemyError as e:
             error_logger.error(f'Erro ao acessar dado do banco: {e}', exc_info=True)
-
-        return None
+        return True, "Ok, Convidado encontrado"
 
     def load_suggestions(self):
         return self.suggestion_repo.list_all()
@@ -54,8 +55,3 @@ class GuestsService:
         return self.user_session_repo.add(user_session_orm)
 
 
-    def check_logged(session_token: str = Cookie(None)):
-        # breakpoint()
-        if not session_token:
-            return None
-        return session_token

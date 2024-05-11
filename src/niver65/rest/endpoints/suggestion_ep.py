@@ -19,6 +19,7 @@ router = APIRouter()
 info_logger = logging.getLogger('info_logger')
 suggestions = []
 
+
 @router.post("/add-music")
 async def add_music(
         request: Request,
@@ -31,20 +32,22 @@ async def add_music(
         db_session: Session = Depends(get_db_session),
 ):
 
-    # if not user_session:
-    #     raise HTTPException(status_code=401, detail="Não autorizado")
+    # breakpoint()
+    if not user_session:
+        obj = {"song_name": "Sessão inválida:", "song_link": '/'}
+        return settings.template_jinja2.TemplateResponse(
+            "partials/music_item.html",
+            {"request": request, "music": obj}
+        )
 
-    service_sugg = GuestsService(db_session)
-    chk_logged = True # service_sugg.check_logged()
-
-    if chk_logged:
-
-        if action=='conclude':
-            if len(suggestions)>0:
-                sugg_repo = SuggestionRepository(db_session)
-                tk_repo = TokenRepository(db_session)
-                for sugg_dto in suggestions:
-                    sugg_orm = SuggestionOrm(**sugg_dto.dict())
+    if action == 'conclude':
+        if len(suggestions) > 0:
+            sugg_repo = SuggestionRepository(db_session)
+            tk_repo = TokenRepository(db_session)
+            for sugg_dto in suggestions:
+                sugg_orm = SuggestionOrm(**sugg_dto.dict())
+                token_from_db = tk_repo.get(token_id)
+                if token_from_db.balance>0:
                     sugg_repo.add(sugg_orm)
                     tk_repo.update_balance(token_id)
 
@@ -52,22 +55,17 @@ async def add_music(
             response.headers['HX-Redirect'] = '/goodbye'
             return response
 
-        if action == 'cancel':
-            response = Response(status_code=HTTP_302_FOUND)
-            response.headers['HX-Redirect'] = '/goodbye'
-            return response
-
-        suggestions.append(SuggestionDto(id_email=email_id, song_name=music_name, info_song=music_link))
-
-        music_obj = {"song_name": music_name, "song_link": music_link}
-        return settings.template_jinja2.TemplateResponse(
-            "partials/music_item.html",
-            {"request": request, "music": music_obj}
-        )
-    else:
+    if action == 'cancel':
         response = Response(status_code=HTTP_302_FOUND)
-        response.headers['HX-Redirect'] = f'{settings.path_base}/'
+        response.headers['HX-Redirect'] = '/goodbye'
         return response
+
+    suggestions.append(SuggestionDto(id_email=email_id, song_name=music_name, info_song=music_link))
+    music_obj = {"song_name": music_name, "song_link": music_link}
+    return settings.template_jinja2.TemplateResponse(
+        "partials/music_item.html",
+        {"request": request, "music": music_obj}
+    )
 
 
 @router.get("/load-music", response_model=ListSuggestionDto)
@@ -80,13 +78,11 @@ async def load_music(request: Request, db_session: Session = Depends(get_db_sess
 
     # breakpoint()
     return settings.template_jinja2.TemplateResponse(
-        "partials/all_music_list.html", {"request": request, "music_list": suggestions_list })
+        "partials/all_music_list.html", {"request": request, "music_list": suggestions_list})
 
 
 @router.get("/goodbye")
 async def goodbye(request: Request, response: Response):
+    response = settings.template_jinja2.TemplateResponse("goodbye.html", {"request": request})
     response.delete_cookie(key="user_session")
-    return settings.template_jinja2.TemplateResponse(
-        "goodbye.html",
-        {"request": request}
-    )
+    return response
