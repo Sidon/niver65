@@ -18,7 +18,7 @@ router = APIRouter()
 info_logger = logging.getLogger('info_logger')
 
 
-@router.get(path=f'{settings.path_base}/', tags=['Entry point'], response_model=dto.ResponseDto)
+@router.get(path=f'{settings.path_base}', tags=['Entry point'], response_model=dto.ResponseDto)
 def entry_point(
         request: Request,
         db_session: Session = Depends(get_db_session),
