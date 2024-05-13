@@ -11,7 +11,7 @@ static_path = os.path.join(BASE_DIR, "static")
 templates_path = os.path.join(BASE_DIR, "templates")
 template_jinja2 = Jinja2Templates(directory=templates_path)
 
-path_base = config.get("PATH_BASE", default='/')
+path_base = config.get("PATH_BASE", default='')
 health_path = config.get('HEALTH_PATH', default='health')
 
 
