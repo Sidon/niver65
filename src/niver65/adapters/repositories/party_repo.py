@@ -27,7 +27,7 @@ class TokenRepository(AbstractRepository):
         try:
             return self.session.query(TokenOrm).filter_by(token=token_id).one_or_none()
         except SQLAlchemyError as e:
-            error_logger.error('Erro ao acessar db: {e}')
+            error_logger.error(f'Erro ao acessar db: {e}')
             raise HTTPException(status_code=500, detail="Erro ao buscar token na base de dados")
 
     def remove(self, token):
@@ -97,12 +97,15 @@ class SessionsRepository(AbstractRepository):
             return user_session  # Após o commit, user_session tem o ID atualizado
         except SQLAlchemyError as e:
             self.session.rollback()  # Importante fazer rollback em caso de falha
+            error_logger.error(f'Erro ao acessar db: {e}')
             raise HTTPException(status_code=400, detail=str(e))
+
     def get(self, session_id):
         try:
             return self.session.query(SessionsOrm).filter_by(id=session_id).one_or_none()
         except SQLAlchemyError as e:
             self.session.rollback()
+            error_logger.error(f'Erro ao acessar db: {e}')
             raise HTTPException(status_code=500, detail="Erro ao buscar token na base de dados")
 
     def remove(self, user_session):
