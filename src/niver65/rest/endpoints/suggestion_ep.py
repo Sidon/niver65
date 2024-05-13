@@ -32,7 +32,6 @@ async def add_music(
         db_session: Session = Depends(get_db_session),
 ):
 
-    # breakpoint()
     if not user_session:
         obj = {"song_name": "Sessão inválida:", "song_link": '/'}
         return settings.template_jinja2.TemplateResponse(
