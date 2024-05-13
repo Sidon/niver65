@@ -46,6 +46,9 @@ app.add_middleware(
 
 app.include_router(v1_router)
 
+breakpoint()
+
+
 # Evento de inicialização
 async def startup():
     info_logger.info("Starting up...")
