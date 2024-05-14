@@ -1,6 +1,6 @@
 {% extends 'base2.html' %}
 
-{% block title %}Suggest Music{% endblock %}
+{% block title %}Sugestões de Música{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
@@ -21,7 +21,7 @@
         <div class="col-md-6">
             <!-- Formulário para nova sugestão -->
             <div class="p-3">
-                <form hx-post="/add-music" hx-target="#user-music-list" hx-swap="beforeend">
+                <form hx-post="/add-music" hx-target="#user-music-list" hx-swap="beforeend" hx-boost="true">
                     <input type="hidden" name="email_id" value="{{ email }}">
                     <input type="hidden" name="token_id" value="{{ token_id }}">
                     <input type="hidden" id="entry_count" name="entry_count" value="0">  <!-- Campo oculto para o contador -->
@@ -31,12 +31,11 @@
                     </div>
                     <div class="mb-3">
                         <label for="music_link" class="form-label">Link Youtube (Se preferir, de duplo click para gerar busca)</label>
-                        <input type="url" class="form-control" id="music_link" name="music_link" required
-                           ondblclick="autoFillYouTubeLink()">
+                        <input type="url" class="form-control" id="music_link" name="music_link" required ondblclick="autoFillYouTubeLink()">
                     </div>
-                    <button type="submit" class="btn btn-primary" name="action" value="submit" title="Enviar sugestao atual e criar uma em branco">Enviar</button>
-                    <button type="submit" class="btn btn-success" name="action" value="conclude" data-bs-toggle="tooltip" data-bs-placement="top" hx-disable="true" title="Concluir adições e salvar.">Concluir</button>
-                    <button type="submit" class="btn btn-danger"  name="action" value="cancel" data-bs-toggle="tooltip" data-bs-placement="top" title="Cancelar todas as adições.">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" name="action" value="submit" title="Enviar sugestão atual e criar uma em branco">Enviar</button>
+                    <button type="submit" class="btn btn-success" name="action" value="conclude" title="Concluir adições e salvar.">Concluir</button>
+                    <button type="submit" class="btn btn-danger" name="action" value="cancel" title="Cancelar todas as adições.">Cancelar</button>
                 </form>
             </div>
             <!-- Área para mostrar as músicas sugeridas pelo usuário -->
@@ -55,7 +54,7 @@
             <div id="all-music-list" class="mt-0" style="max-height: 600px; overflow-y: auto;">
                 <!-- HTMX para carregar a lista de músicas do banco -->
                 <div hx-get="/load-music" hx-trigger="load" hx-target="#all-music-list" hx-swap="innerHTML">
-                    Loading music list...
+                    Carregando lista de músicas...
                 </div>
             </div>
         </div>
@@ -64,7 +63,6 @@
 
 <!-- Scripts -->
 <script>
-
 document.body.addEventListener('htmx:afterRequest', function(event) {
     if (event.detail && event.detail.elt && event.detail.elt.tagName === 'FORM') {
         document.getElementById('music_name').value = '';
