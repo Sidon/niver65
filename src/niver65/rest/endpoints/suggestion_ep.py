@@ -30,7 +30,6 @@ async def add_music(
         user_session: str = Cookie(None),
         db_session: Session = Depends(get_db_session),
 ):
-    # breakpoint()
 
     if not user_session:
         response = JSONResponse(status_code=HTTP_302_FOUND, content={})
