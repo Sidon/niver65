@@ -4,14 +4,14 @@
 
 {% block content %}
 <div class="container-fluid vh-100 d-flex flex-column">
-    <div class="row">
+    <div class="row flex-shrink-0">
         <div class="col-12">
             <div class="p-3">
                 <h1 class="text-white">Músicas Cadastradas</h1>
             </div>
         </div>
     </div>
-    <div class="row flex-grow-1">
+    <div class="row flex-grow-1 overflow-hidden">
         <div class="col-12 d-flex flex-column">
             <div id="all-music-list" class="table-responsive flex-grow-1 overflow-auto">
                 <table class="table table-striped table-bordered table-hover table-dark">
