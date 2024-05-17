@@ -14,7 +14,10 @@ async def show_all_music_data(request: Request, db_session: Session = Depends(ge
     service_guest_sugg = GuestsService(db_session)
     suggestions_db = service_guest_sugg.load_suggestions()
     if suggestions_db:
-        suggestions_list = [SuggestionDto.from_orm(sug).dict() for sug in suggestions_db]
+        suggestions_list = sorted(
+            [SuggestionDto.from_orm(sug).dict() for sug in suggestions_db],
+            key=lambda x: x['song_name']
+        )
 
     return settings.template_jinja2.TemplateResponse(
         "show_all_music.html", {"request": request, "music_list": suggestions_list})
